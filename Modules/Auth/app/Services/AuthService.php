@@ -28,7 +28,7 @@ class AuthService
 
         event(new Registered($user));
 
-        $expiresAt = now()->addMinutes(config('sanctum.expiration', 60));
+        $expiresAt = now()->addMinutes(config('sanctum.expiration') ?? 60);
         $token = $user->createToken('auth_token', ['*'], $expiresAt)->plainTextToken;
 
         return [
@@ -75,7 +75,7 @@ class AuthService
             $expiresAt = now()->addYear();
         } else {
             // Normal Login: Token expires based on config (default 60 mins)
-            $expiresAt = now()->addMinutes(config('sanctum.expiration', 60));
+            $expiresAt = now()->addMinutes(config('sanctum.expiration') ?? 60);
         }
 
         $token = $user->createToken('auth_token', ['*'], $expiresAt)->plainTextToken;

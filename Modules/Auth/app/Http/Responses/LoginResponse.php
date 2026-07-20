@@ -21,7 +21,7 @@ class LoginResponse implements LoginResponseContract
     {
         $user = $request->user();
 
-        $expiresAt = now()->addMinutes(config('sanctum.expiration', 60));
+        $expiresAt = now()->addMinutes(config('sanctum.expiration') ?? 60);
         $token = $user->createToken('auth_token', ['*'], $expiresAt)->plainTextToken;
 
         return response()->json([

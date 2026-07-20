@@ -16,7 +16,15 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->in('Feature', '../Modules/*/tests/Feature');
+    ->in(
+        'Feature',
+        '../Modules/Auth/tests/Feature',
+        '../Modules/Acl/tests/Feature',
+        '../Modules/Store/tests/Feature/StoreApiTest.php'
+    );
+
+pest()->extend(TestCase::class)
+    ->in('../Modules/Store/tests/Feature/OrderConcurrencyTest.php');
 
 /*
 |--------------------------------------------------------------------------

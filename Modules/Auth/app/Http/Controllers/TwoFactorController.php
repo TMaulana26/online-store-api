@@ -87,7 +87,7 @@ class TwoFactorController extends Controller
         if ($remember) {
             $expiresAt = now()->addYear();
         } else {
-            $expiresAt = now()->addMinutes(config('sanctum.expiration', 60));
+            $expiresAt = now()->addMinutes(config('sanctum.expiration') ?? 60);
         }
 
         $token = $user->createToken('auth_token', ['*'], $expiresAt)->plainTextToken;

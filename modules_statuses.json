@@ -1,4 +1,5 @@
 {
     "Acl": true,
-    "Auth": true
+    "Auth": true,
+    "Store": true
 }

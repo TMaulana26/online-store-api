@@ -85,7 +85,7 @@ class AuthController extends Controller
         }
 
         // Issue new token
-        $expiresAt = now()->addMinutes(config('sanctum.expiration', 60));
+        $expiresAt = now()->addMinutes(config('sanctum.expiration') ?? 60);
         $token = $user->createToken('auth_token', ['*'], $expiresAt)->plainTextToken;
 
         return $this->successResponse([
