@@ -10,7 +10,9 @@ use Modules\Store\Models\Order;
 use Modules\Store\Models\Product;
 
 test('concurrency purchase prevents overselling', function () {
-    // 1. Seed a user and a product
+    // 1. Preemptively clean up any stale test user from interrupted runs
+    User::withTrashed()->where('email', 'concurrency@example.com')->forceDelete();
+
     $user = User::create([
         'name' => 'Concurrency Buyer',
         'email' => 'concurrency@example.com',
