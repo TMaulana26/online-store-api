@@ -293,9 +293,13 @@ php artisan play:hidden-item
 ```
 
 #### 2. Move the Player
-Make a valid navigation move (relative to the current player position) using steps `A`, `B`, `C`, and `D`:
+Make a valid navigation move (relative to the current player position) using steps `A`, `B`, `C`, and `D`. Any omitted parameters default to `0`:
 ```bash
+# Move Up 3, Right 5, Down 1, Left 1
 php artisan play:hidden-item --A=3 --B=5 --C=1 --D=1
+
+# Move Up 3 only (B, C, and D default to 0)
+php artisan play:hidden-item --A=3
 ```
 *Note: If the player successfully lands on `$`, they win the game and the session is cleared.*
 

@@ -65,17 +65,10 @@ class PlayHiddenItemCommand extends Command
         $session = $this->getOrCreateSession();
 
         if ($aOpt !== null || $bOpt !== null || $cOpt !== null || $dOpt !== null) {
-            // Validate specific input steps
-            if ($aOpt === null || $bOpt === null || $cOpt === null || $dOpt === null) {
-                $this->error('To move, you must provide all options: --A, --B, --C, and --D.');
-
-                return 1;
-            }
-
-            $A = (int) $aOpt;
-            $B = (int) $bOpt;
-            $C = (int) $cOpt;
-            $D = (int) $dOpt;
+            $A = $aOpt !== null ? (int) $aOpt : 0;
+            $B = $bOpt !== null ? (int) $bOpt : 0;
+            $C = $cOpt !== null ? (int) $cOpt : 0;
+            $D = $dOpt !== null ? (int) $dOpt : 0;
 
             if ($A < 0 || $B < 0 || $C < 0 || $D < 0) {
                 $this->error('Steps A, B, C, and D must be non-negative integers.');
