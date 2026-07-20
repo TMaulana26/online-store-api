@@ -10,6 +10,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -85,6 +86,43 @@ return Application::configure(basePath: dirname(__DIR__))
                     'data' => null,
                     'errors' => null,
                 ], 422);
+            }
+
+            if ($request->is('api/*') || $request->expectsJson()) {
+                if ($e instanceof ValidationException ||
+                    $e instanceof ModelNotFoundException ||
+                    $e instanceof AuthenticationException ||
+                    $e instanceof AuthorizationException ||
+                    $e instanceof AccessDeniedHttpException) {
+                    return null;
+                }
+
+                $status = 500;
+                $message = 'Internal Server Error.';
+
+                if ($e instanceof HttpExceptionInterface) {
+                    $status = $e->getStatusCode();
+                    $message = $e->getMessage();
+                } elseif (config('app.debug')) {
+                    $message = $e->getMessage();
+                }
+
+                $response = [
+                    'success' => false,
+                    'message' => $message,
+                    'data' => null,
+                    'errors' => null,
+                ];
+
+                if (config('app.debug')) {
+                    $response['debug'] = [
+                        'exception' => get_class($e),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ];
+                }
+
+                return response()->json($response, $status);
             }
 
             return null; // fallback to default handler

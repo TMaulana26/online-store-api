@@ -13,6 +13,8 @@ Route::get('products/{product}', [ProductController::class, 'show'])->name('prod
 // Authenticated orders
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::post('orders', [OrderController::class, 'store'])
+        ->middleware('throttle:checkout')
+        ->name('orders.store');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 });

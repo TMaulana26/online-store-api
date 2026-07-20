@@ -49,6 +49,7 @@ test('concurrency purchase prevents overselling', function () {
                 ->withHeaders([
                     'Accept' => 'application/json',
                     'Accept-Language' => 'en',
+                    'X-Testing' => 'true',
                 ])
                 ->post('https://online-store-api.test/api/v1/orders', $payload);
         }

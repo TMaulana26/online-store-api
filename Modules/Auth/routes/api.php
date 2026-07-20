@@ -4,8 +4,12 @@ use Illuminate\Support\Facades\Route;
 use Modules\Auth\Http\Controllers\AuthController;
 
 Route::prefix('auth')->group(function () {
-    Route::post('register', [AuthController::class, 'register'])->name('auth.register');
-    Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('register', [AuthController::class, 'register'])
+        ->middleware('throttle:login')
+        ->name('auth.register');
+    Route::post('login', [AuthController::class, 'login'])
+        ->middleware('throttle:login')
+        ->name('auth.login');
     Route::post('forgot-password', [AuthController::class, 'forgotPassword'])->name('auth.forgot-password');
     Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('auth.reset-password');
 
