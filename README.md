@@ -249,3 +249,64 @@ To prevent negative inventory stock values and overselling during a high-traffic
 ### Database Engine Requirements
 - **PostgreSQL / MySQL (InnoDB):** Must be used in local development and production. These engines support true row-level locking.
 - **SQLite (In-Memory / File):** Does *not* support row-level locking. Under high write concurrency, SQLite will lock the entire database, leading to database lock errors rather than serialized queuing. Therefore, testing or deploying concurrent workloads against standard SQLite is unsupported.
+
+---
+
+## 🎮 Task 2: Hidden Item Game (Artisan Console Command)
+
+We have implemented Task 2 as a Laravel Artisan Console Command `play:hidden-item`.
+
+The game includes a **Cache-driven session system** where the player's coordinate `X` moves dynamically and the hidden item `$` remains persistent at its randomized hidden coordinate until player `X` lands on it.
+
+### Game Grid Layout
+The layout grid is represented as a 6x8 coordinate system (0-indexed):
+- `#` represents an obstacle (non-walkable).
+- `.` represents a clear path (walkable).
+- `X` represents the current position of the player (starts at Row 4, Column 1).
+- `$` represents the persistent location of the hidden item.
+
+### Path Traversal & Order of Operations
+The solver navigates the player from their *current* position `X` using the following sequence of steps:
+1. **Up/North** `A >= 0` step(s).
+2. **Right/East** `B >= 0` step(s).
+3. **Down/South** `C >= 0` step(s).
+4. **Left/West** `D >= 0` step(s).
+
+All intermediate steps along each segment must consist of clear path points (`.`). If the player hits an obstacle (`#`) at any point along a segment, the path is blocked and invalid. A step count of `0` means the player does not move in that direction.
+
+### Grid Solver Outcomes (from Starting position (4,1))
+Running the solver on a fresh starting state outputs all unique coordinates reachable under these rules:
+- `(Row 2, Col 5)`
+- `(Row 2, Col 6)`
+- `(Row 3, Col 5)`
+- `(Row 4, Col 3)`
+- `(Row 4, Col 5)`
+
+On a fresh session start, the item `$` is randomly hidden at one of these 5 coordinates.
+
+### How to Run the Game Command
+
+#### 1. View Current Game Status
+Displays the active game session state, player position, hidden item location, and renders the current grid map:
+```bash
+php artisan play:hidden-item
+```
+
+#### 2. Move the Player
+Make a valid navigation move (relative to the current player position) using steps `A`, `B`, `C`, and `D`:
+```bash
+php artisan play:hidden-item --A=3 --B=5 --C=1 --D=1
+```
+*Note: If the player successfully lands on `$`, they win the game and the session is cleared.*
+
+#### 3. Reset the Game Session
+Flush the active session cache and start a new game with a newly randomized hidden item:
+```bash
+php artisan play:hidden-item --reset
+```
+
+### Automated Testing
+Run the command feature tests:
+```bash
+php artisan test --filter=PlayHiddenItemCommand
+```
