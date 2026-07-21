@@ -20,7 +20,9 @@ pest()->extend(TestCase::class)
         'Feature',
         '../Modules/Auth/tests/Feature',
         '../Modules/Acl/tests/Feature',
-        '../Modules/Store/tests/Feature/StoreApiTest.php'
+        '../Modules/Store/tests/Feature/StoreApiTest.php',
+        '../Modules/Store/tests/Feature/ProductApiTest.php',
+        '../Modules/Store/tests/Feature/OrderApiTest.php'
     );
 
 pest()->extend(TestCase::class)

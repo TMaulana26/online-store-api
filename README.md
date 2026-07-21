@@ -57,11 +57,24 @@ All API communications strictly use **JSON** for request payloads and response b
 | **POST** | `/api/v1/auth/register` | Guest | Registers a new user. Rate-limited to 5 requests/min. |
 | **POST** | `/api/v1/auth/login` | Guest | Logs in a user. Returns a Bearer token. Rate-limited to 5 requests/min. |
 | **POST** | `/api/v1/auth/logout` | Sanctum | Revokes the current active Sanctum token. |
-| **GET** | `/api/v1/products` | Guest | Paginated list of active products. Supports sorting/keywords. |
-| **GET** | `/api/v1/products/{product}` | Guest | Details of a specific active product. |
-| **GET** | `/api/v1/orders` | Sanctum | Paginated list of the authenticated user's orders. |
-| **POST** | `/api/v1/orders` | Sanctum | Places a new order. Rate-limited to 10 requests/min. |
-| **GET** | `/api/v1/orders/{order}` | Sanctum | Retrieve details of an order owned by the authenticated user. |
+| **GET** | `/api/v1/products` | Guest / Sanctum | Paginated list of active products (guest) or all products (admin). |
+| **GET** | `/api/v1/products/{product}` | Guest / Sanctum | Details of a specific active product (guest) or any product (admin). |
+| **POST** | `/api/v1/products` | Sanctum | Create a new product. |
+| **PUT** | `/api/v1/products/{product}` | Sanctum | Update an existing product. |
+| **DELETE** | `/api/v1/products/{product}` | Sanctum | Soft-delete a product. |
+| **PATCH** | `/api/v1/products/{product}/toggle-status` | Sanctum | Toggle active status of a product. |
+| **PATCH** | `/api/v1/products/{id}/restore` | Sanctum | Restore a soft-deleted product. |
+| **DELETE** | `/api/v1/products/{id}/force-delete` | Sanctum | Permanently delete a soft-deleted product. |
+| **POST/PATCH** | `/api/v1/products/bulk/*` | Sanctum | Bulk actions (delete, restore, force-delete, toggle-status). |
+| **GET** | `/api/v1/orders` | Sanctum | Paginated list of user's orders (user) or all orders (admin). |
+| **POST** | `/api/v1/orders` | Sanctum | Place a new order (user checkout) or create order (admin CRUD). |
+| **GET** | `/api/v1/orders/{order}` | Sanctum | Retrieve details of an order owned by user or any order (admin). |
+| **PUT** | `/api/v1/orders/{order}` | Sanctum | Update an existing order. Adjusts/refunds product stock. |
+| **DELETE** | `/api/v1/orders/{order}` | Sanctum | Soft-delete an order. |
+| **PATCH** | `/api/v1/orders/{order}/toggle-status` | Sanctum | Toggle active status of an order. |
+| **PATCH** | `/api/v1/orders/{id}/restore` | Sanctum | Restore a soft-deleted order. |
+| **DELETE** | `/api/v1/orders/{id}/force-delete` | Sanctum | Permanently delete a soft-deleted order. |
+| **POST/PATCH** | `/api/v1/orders/bulk/*` | Sanctum | Bulk actions (delete, restore, force-delete, toggle-status). |
 
 ---
 
@@ -210,10 +223,14 @@ Runs only the race-condition test that simulates 30 concurrent order requests on
 php artisan test --filter=concurrency
 ```
 
-#### 3. Run Store Integration Tests Only
-Runs basic product catalog searches, localized translation listings, and standard checkout validations:
+#### 3. Run Store Integration and CRUD Tests Only
+Runs basic product catalog searches, localized translation listings, standard checkout validations, and full product/order CRUD checks:
 ```bash
 php artisan test --filter=StoreApiTest
+# and
+php artisan test --filter=ProductApiTest
+# and
+php artisan test --filter=OrderApiTest
 ```
 
 #### 4. Run Authentication & ACL Tests Only
@@ -223,6 +240,23 @@ php artisan test --filter=AuthApiTest
 # and
 php artisan test --filter=PermissionApiTest
 ```
+
+---
+
+## 📝 API Documentation (Scramble) & Seeding
+
+### 1. Interactive API Reference
+This project utilizes **Dedoc Scramble** to auto-generate OpenAPI documentation.
+- **Route**: Access the documentation locally at `/docs/api`.
+- **Theme**: Scramble is styled to load in **Dark Mode** by default.
+- **Favicon**: Features a custom storefront favicon brand at `/favicon.png`.
+
+### 2. Database Seeding
+You can populate the database with realistic test datasets (including products with English/Indonesian translations, regular/flash sale prices, and completed orders):
+```bash
+php artisan db:seed
+```
+This runs the default `DatabaseSeeder`, calling `StoreDatabaseSeeder` and `AclDatabaseSeeder`.
 
 ---
 

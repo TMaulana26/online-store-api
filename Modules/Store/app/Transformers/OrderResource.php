@@ -19,6 +19,8 @@ class OrderResource extends JsonResource
             'user_id' => $this->user_id,
             'status' => $this->status,
             'total_amount' => $this->total_amount,
+            'is_active' => $this->is_active,
+            'deleted_at' => $this->deleted_at?->toIso8601String(),
             'items' => OrderItemResource::collection($this->whenLoaded('items')),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),

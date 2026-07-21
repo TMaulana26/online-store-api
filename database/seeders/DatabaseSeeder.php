@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Modules\Acl\Database\Seeders\AclDatabaseSeeder;
+use Modules\Store\Database\Seeders\StoreDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AclDatabaseSeeder::class,
+            StoreDatabaseSeeder::class,
         ]);
     }
 }
